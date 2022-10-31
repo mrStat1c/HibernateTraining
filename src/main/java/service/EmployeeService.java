@@ -1,15 +1,15 @@
 package service;
 
-import businessLogic.SesseionUtil;
+import businessLogic.SessionUtil;
 import dao.EmployeeDAO;
-import entity.Address;
 import entity.Employee;
+import entity.Item;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 
 import java.util.List;
 
-public class EmployeeService extends SesseionUtil implements EmployeeDAO {
+public class EmployeeService extends SessionUtil implements EmployeeDAO {
     @Override
     public void add(Employee employee) {
         openTransactionSession();
@@ -21,9 +21,9 @@ public class EmployeeService extends SesseionUtil implements EmployeeDAO {
     @Override
     public List<Employee> getAll() {
         openTransactionSession();
-        String sql = "SELECT * FROM employee";
+        String hql = "FROM Employee";
         Session session = getSession();
-        Query query = session.createNativeQuery(sql).addEntity(Address.class);
+        Query query = session.createQuery(hql);
         List<Employee> employeeList = query.list();
         closeTransactionSession();
         return employeeList;
@@ -32,10 +32,23 @@ public class EmployeeService extends SesseionUtil implements EmployeeDAO {
     @Override
     public Employee getById(long id) {
         openTransactionSession();
-        String sql = "SELECT * FROM employee WHERE id = :id";
+        String hql = "FROM Employee WHERE id = :id";
         Session session = getSession();
-        Query query = session.createNativeQuery(sql).addEntity(Address.class);
+        Query query = session.createQuery(hql);
         query.setParameter("id", id);
+        Employee employee = (Employee) query.getSingleResult();
+        closeTransactionSession();
+        return employee;
+    }
+
+    @Override
+    public Employee getByFio(String firstName, String secondName) {
+        openTransactionSession();
+        String hql = "FROM Employee WHERE firstName = :firstName AND secondName = :secondName";
+        Session session = getSession();
+        Query query = session.createQuery(hql);
+        query.setParameter("firstName", firstName);
+        query.setParameter("secondName", secondName);
         Employee employee = (Employee) query.getSingleResult();
         closeTransactionSession();
         return employee;

@@ -1,36 +1,42 @@
 package entity;
 
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
-import java.util.Date;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
+
 
 @Data
 @NoArgsConstructor
 @Entity
-@Table(name="employee")
+@Table(name = "employee")
 public class Employee {
 
     @Id
-    @GeneratedValue(strategy =  GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @Column(name="first_name")
+    @Column(name = "first_name")
     private String firstName;
-    @Column(name="second_name")
+    @Column(name = "second_name")
     private String secondName;
-    @Column(name="birthday")
+    @Column(name = "birthday")
     private Date birthday;
-    @OneToOne(cascade = CascadeType.ALL)
+    //employee - название поля (FK) из Address
+    @OneToOne(mappedBy = "employee", cascade = CascadeType.ALL)
     private Address address;
+    //owner - название поля (FK) из Order
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
+    private List<Item> items;
 
+    //FetchType.LAZY - при загрузке Employee не будут загружаться в память projects. Они будут загружены только по
+    //требованию, например при getProjects()
+    //в данном случае указывать FetchType.LAZY не обязательно т.к. для ManyToMany загрузка по умолчанию LAZY
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(
             name = "empl_proj",
-            joinColumns = @JoinColumn(name="employee_id"),
-            inverseJoinColumns = @JoinColumn(name="project_id")
+            joinColumns = @JoinColumn(name = "employee_id"),
+            inverseJoinColumns = @JoinColumn(name = "project_id")
     )
     private Set<Project> projects;
 
@@ -61,5 +67,18 @@ public class Employee {
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), id, firstName, secondName, birthday, address);
+    }
+
+    public void addItem(Item item) {
+        if (this.items == null) {
+            this.items = new ArrayList<>();
+        }
+        this.items.add(item);
+        item.setOwner(this);
+    }
+
+    public void setAddress(Address address){
+        this.address = address;
+        this.address.setEmployee(this);
     }
 }

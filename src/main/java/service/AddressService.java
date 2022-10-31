@@ -1,6 +1,6 @@
 package service;
 
-import businessLogic.SesseionUtil;
+import businessLogic.SessionUtil;
 import dao.AddressDAO;
 import entity.Address;
 import org.hibernate.Session;
@@ -8,7 +8,7 @@ import org.hibernate.query.Query;
 
 import java.util.List;
 
-public class AddressService extends SesseionUtil implements AddressDAO {
+public class AddressService extends SessionUtil implements AddressDAO {
     @Override
     public void add(Address address) {
         openTransactionSession();
@@ -20,9 +20,9 @@ public class AddressService extends SesseionUtil implements AddressDAO {
     @Override
     public List<Address> getAll() {
         openTransactionSession();
-        String sql = "SELECT * FROM address";
+        String hql = "FROM Address";
         Session session = getSession();
-        Query query = session.createNativeQuery(sql).addEntity(Address.class);
+        Query query = session.createQuery(hql);
         List<Address> addressList = query.list();
         closeTransactionSession();
         return addressList;
@@ -31,9 +31,9 @@ public class AddressService extends SesseionUtil implements AddressDAO {
     @Override
     public Address getById(long id) {
         openTransactionSession();
-        String sql = "SELECT * FROM address WHERE id = :id";
+        String hql = "FROM Address WHERE id = :id";
         Session session = getSession();
-        Query query = session.createNativeQuery(sql).addEntity(Address.class);
+        Query query = session.createQuery(hql);
         query.setParameter("id", id);
         Address address = (Address) query.getSingleResult();
         closeTransactionSession();

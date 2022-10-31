@@ -1,10 +1,10 @@
 package entity;
 
 
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
 import java.util.Objects;
 import java.util.Set;
 
@@ -19,7 +19,6 @@ public class Project {
     private long id;
     @Column(name="title")
     private String title;
-
     @ManyToMany(mappedBy = "projects")
     private Set<Employee> emplyees;
 

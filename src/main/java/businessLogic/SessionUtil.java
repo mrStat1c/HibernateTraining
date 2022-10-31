@@ -4,7 +4,7 @@ import lombok.Getter;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-public class SesseionUtil {
+public class SessionUtil {
 
     @Getter
     private Session session;

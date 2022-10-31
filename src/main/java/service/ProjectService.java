@@ -1,16 +1,14 @@
 package service;
 
-import businessLogic.SesseionUtil;
+import businessLogic.SessionUtil;
 import dao.ProjectDAO;
-import entity.Address;
-import entity.Employee;
 import entity.Project;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 
 import java.util.List;
 
-public class ProjectService extends SesseionUtil implements ProjectDAO {
+public class ProjectService extends SessionUtil implements ProjectDAO {
     @Override
     public void add(Project project) {
         openTransactionSession();
@@ -22,9 +20,9 @@ public class ProjectService extends SesseionUtil implements ProjectDAO {
     @Override
     public List<Project> getAll() {
         openTransactionSession();
-        String sql = "SELECT * FROM project";
+        String hql = "FROM Project";
         Session session = getSession();
-        Query query = session.createNativeQuery(sql).addEntity(Address.class);
+        Query query = session.createQuery(hql);
         List<Project> projectList = query.list();
         closeTransactionSession();
         return projectList;
@@ -33,9 +31,9 @@ public class ProjectService extends SesseionUtil implements ProjectDAO {
     @Override
     public Project getById(long id) {
         openTransactionSession();
-        String sql = "SELECT * FROM project WHERE id = :id";
+        String sql = "FROM Project WHERE id = :id";
         Session session = getSession();
-        Query query = session.createNativeQuery(sql).addEntity(Address.class);
+        Query query = session.createQuery(sql);
         query.setParameter("id", id);
         Project project = (Project) query.getSingleResult();
         closeTransactionSession();
